@@ -12,15 +12,15 @@ phases:
   install:
     runtime-versions:
       nodejs: 18
-      java: corretto11     # SonarScanner needs Java
     commands:
       - echo "Installing backend dependencies..."
       - cd $BACKEND_DIR && npm install
       - cd ../$FRONTEND_DIR && npm install
       - cd ../
-      - echo "Installing SonarQube Scanner CLI..."
-      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-      - unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+      # Download SonarQube Scanner
+      - echo "Downloading SonarQube Scanner..."
+      - wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+      - unzip sonar-scanner.zip
       - mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
       - export PATH=$PATH:/opt/sonar-scanner/bin
       - echo "SonarQube Scanner installed."
@@ -29,11 +29,7 @@ phases:
     commands:
       - echo "Running SonarQube Scan..."
       - export PATH=$PATH:/opt/sonar-scanner/bin
-      - sonar-scanner \
-          -Dsonar.projectKey=juhi-final \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=http://3.92.231.52 \
-          -Dsonar.login=sqp_51f14dc3c99ed3b3dcaa80dbb73f0ce899452cf9
+      - sonar-scanner -Dsonar.projectKey=juhi-final -Dsonar.sources=. -Dsonar.host.url=http://3.92.231.52 -Dsonar.login=sqp_51f14dc3c99ed3b3dcaa80dbb73f0ce899452cf9
 
   build:
     commands:
