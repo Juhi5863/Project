@@ -37,7 +37,8 @@ phases:
   build:
     commands:
       - echo "Building frontend..."
-      - cd $FRONTEND_DIR && npm run build
+      - cd $FRONTEND_DIR
+      - REACT_APP_BACKEND_URL="http://aada5b9a3fb8048b99fc96c396b61bfc-295581765.us-west-1.elb.amazonaws.com:4000" npm run build
       - cd ../
       - echo "Logging into Amazon ECR..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 713881797197.dkr.ecr.us-west-1.amazonaws.com
