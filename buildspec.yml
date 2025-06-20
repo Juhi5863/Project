@@ -1,0 +1,40 @@
+version: 0.2
+
+env:
+  variables:
+    BACKEND_DIR: backend
+    FRONTEND_DIR: frontend
+    IMAGE_REPO_BACKEND: 713881797197.dkr.ecr.us-east-1.amazonaws.com/inventory-backend
+    IMAGE_REPO_FRONTEND: 713881797197.dkr.ecr.us-east-1.amazonaws.com/inventory-frontend
+    AWS_DEFAULT_REGION: us-east-1
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Installing backend dependencies..."
+      - cd $BACKEND_DIR && npm install
+      - cd ../$FRONTEND_DIR && npm install
+      - cd ../
+
+  build:
+    commands:
+      - echo "Building frontend..."
+      - cd $FRONTEND_DIR && npm run build
+      - cd ../
+      - echo "Logging into Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 713881797197.dkr.ecr.us-east-1.amazonaws.com
+      - echo "Building backend Docker image..."
+      - docker build -t $IMAGE_REPO_BACKEND:latest $BACKEND_DIR
+      - echo "Building frontend Docker image..."
+      - docker build -t $IMAGE_REPO_FRONTEND:latest $FRONTEND_DIR
+      - echo "Pushing backend Docker image..."
+      - docker push $IMAGE_REPO_BACKEND:latest
+      - echo "Pushing frontend Docker image..."
+      - docker push $IMAGE_REPO_FRONTEND:latest
+
+artifacts:
+  base-directory: k8s
+  files:
+    - '**/*'
