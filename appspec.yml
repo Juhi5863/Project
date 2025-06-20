@@ -13,3 +13,5 @@ hooks:
         - kubectl apply -f /tmp/k8s/db-secret.yaml
         - kubectl apply -f /tmp/k8s/backend-deployment.yaml
         - kubectl apply -f /tmp/k8s/frontend-deployment.yaml
+        - kubectl rollout restart deployment backend-deployment
+        - kubectl rollout restart deployment frontend-deployment
